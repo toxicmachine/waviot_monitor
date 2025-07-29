@@ -1,0 +1,6 @@
+{% load static %}
+    {% autoescape off %}
+        {{ map|safe }}
+    {% endautoescape %}
+    <p class="text-center m-2 fs-5">{{ map_description }}</p>
+    <span>* некоторые метки могут быть в неверном месте из-за неправильных координат</span>

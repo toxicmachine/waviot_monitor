@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_content %}
+    <div class="row mb-4">
+        <div class="col-lg-12 col-12">
+            <div class="custom-block bg-white">
+                {% if parse_access %}
+                <h5 class="mb-2 ms-2">Варианты опроса сервера Waviot</h5>
+                <div class="table-responsive p-2">
+                    <table class="account-table table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Вид опроса</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% csrf_token %}
+                            <tr>
+                                <td scope="row">Опрос сервера по базовым станциям</td>
+                                <td class="text-end" scope="row">
+                                    <div style="width: 2rem; height: 2rem; border-width: 0.5em; animation-speed: 0.3s;
+                                    {% if not parse_status_bs.status %}
+                                            visibility: hidden;
+                                    {% endif %}"
+                                    id="spinner-bs" class="spinner-border text-tosk" role="status">
+                                    <span class="visually-hidden"></span>
+                                    </div>
+                                </td>
+                                <td scope="row">
+                                    <button id="startBS" style="width: 200px;" class="btn profile-custom-btn"
+                                    {% if parse_status_bs.status %}
+                                            disabled
+                                    {% endif %}
+                                    >Запуск опроса</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row">Опрос сервера по приборам учета</td>
+                                <td class="text-end" scope="row">
+                                    <div style="width: 2rem; height: 2rem; border-width: 0.5em; animation-speed: 0.3s;
+                                    {% if not parse_status_pu.status %}
+                                            visibility: hidden;
+                                    {% endif %}"
+                                     id="spinner-pu" class="spinner-border text-tosk" role="status">
+                                     <span class="visually-hidden"></span>
+                                    </div>
+                                </td>
+                                <td scope="row">
+                                    <button id="startPU" style="width: 200px;" class="btn profile-custom-btn"
+                                    {% if parse_status_pu.status %}
+                                            disabled
+                                    {% endif %}
+                                    >Запуск опроса</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+                <h5 class="mb-2 ms-2">История опросов сервера по базовым станций</h5>
+                <div class="table-responsive p-2">
+                    <table class="account-table table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Вид опроса</th>
+                                <th scope="col">Способ опроса</th>
+                                <th scope="col">Дата и время опроса</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in request_bs_history %}
+                            <tr>
+                                <td scope="row">{{record.parse_type.name}}</td>
+                                <td scope="row">{{record.parse_comment}}</td>
+                                <td scope="row">{{record.parse_end_time}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <h5 class="mb-2 ms-2">История опросов сервера по приборам учета</h5>
+                <div class="table-responsive p-2">
+                    <table class="account-table table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Вид опроса</th>
+                                <th scope="col">Способ опроса</th>
+                                <th scope="col">Дата и время опроса</th>
+                                <th scope="col">Кол-во новых записей показаний ПУ</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in request_pu_history %}
+                            <tr>
+                                <td scope="row">{{record.parse_type.name}}</td>
+                                <td scope="row">{{record.parse_comment}}</td>
+                                <td scope="row">{{record.parse_end_time}}</td>
+                                <td scope="row">{{record.device_count}}</td>
+                                <td scope="row">
+                                    <a href="{% url 'parse-view-all' record.pk %}" target="_blank" class="btn profile-custom-btn">
+                                        Подробнее
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'pages/js/for-server-parse.js' %}?20250625"></script>
+{% endblock %}

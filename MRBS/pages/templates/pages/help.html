@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_content %}
+<div class="row mb-4">
+    <div class="col-lg-12 col-12">
+        <div class="custom-block bg-white">
+            <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about-tab-pane" type="button" role="tab" aria-controls="about-tab-pane" aria-selected="true"><i class="bi-question-circle me-2"></i>О сервисе</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="data-view-tab" data-bs-toggle="tab" data-bs-target="#data-view-tab-pane" type="button" role="tab" aria-controls="data-view-tab-pane" aria-selected="false" tabindex="-1"><i class="bi-clipboard-data me-2"></i>Обзор данных</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="list-bs-tab" data-bs-toggle="tab" data-bs-target="#list-bs-tab-pane" type="button" role="tab" aria-controls="list-bs-tab-pane" aria-selected="false" tabindex="-1"><i class="bi-list-stars me-2"></i>Список базовых станций</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="list-points-tab" data-bs-toggle="tab" data-bs-target="#list-points-tab-pane" type="button" role="tab" aria-controls="list-points-tab-pane" aria-selected="false" tabindex="-1"><i class="bi-list-stars me-2"></i>Список адресов ПУ</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="info-pu-tab" data-bs-toggle="tab" data-bs-target="#info-pu-tab-pane" type="button" role="tab" aria-controls="info-pu-tab-pane" aria-selected="false" tabindex="-1"><i class="bi-info-square me-2"></i>Информация о ПУ</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="data-on-map-tab" data-bs-toggle="tab" data-bs-target="#data-on-map-tab-pane" type="button" role="tab" aria-controls="data-on-map-tab-pane" aria-selected="false" tabindex="-1"><i class="bi-geo-alt me-2"></i>Данные на карте</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="server-parse-tab" data-bs-toggle="tab" data-bs-target="#server-parse-tab-pane" type="button" role="tab" aria-controls="server-parse-tab-pane" aria-selected="false" tabindex="-1"><i class="bi-cursor me-2"></i>Опросы сервера</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade active show" id="about-tab-pane" role="tabpanel" aria-labelledby="about-tab" tabindex="0">
+                    <h6 class="mb-2 text-center"><i class="bi-asterisk"></i> Мониторинг работы УСПД</h6>
+                    <div class="m-4">
+                        <p>Данный сервис предназначен для контроля работы базовых станций и приборов учета Waviot.</p>
+                        <br>
+                        <p>В разных разделах сервиса визуализированы на графиках и диаграммах данные по опросу приборов учета, опросу адресов установки приборов учета, базовых станций.</p>
+                        <br>
+                        <p>В других вкладках этой страницы указана информация о разделах.</p>
+                        <br>
+                        <p>Текущая версия сервиса <span class="badge text-bg-success">1.0.0</span> </p>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="data-view-tab-pane" role="tabpanel" aria-labelledby="data-view-tab" tabindex="0">
+                    <div class="row">
+                        <h6 class="mb-2 ms-2 text-center">Страница обзора данных для отдельного подразделения</h6>
+                        <div class="col-lg-4 col-12">
+                            <div class="table-responsive p-2 text-center">
+                                <table class="account-table table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="w-25">Номер Блока</th>
+                                            <th scope="col">Информация</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 1</span></td>
+                                            <td scope="row">В блоке указано подразделение, по которому представлена информация на странице. А также количество приборов учета, количество базовых станций и количество адресов, на которых установлены приборы учета.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 2</span></td>
+                                            <td scope="row">В блоке представлена таблица, в которой указаны дата и время опроса сервера по ПУ и сколько приборов учета за тот или иной опрос обновили данные.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 3</span></td>
+                                            <td scope="row">В блоке построен график на основании данных из таблицы блока 2.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 4</span></td>
+                                            <td scope="row">В блоке построены диаграммы, показывающие отношение ПУ, обновивших данные и нет, в процентном соотношении, за последние 3 опроса сервера по ПУ. При нажатии на кнопку "Подробнее" осуществляется переход на выбранную страницу опроса сервера по приборам учета.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 5</span></td>
+                                            <td scope="row">В блоке представлена таблица, в которой указаны дата и время опроса сервера и сколько адресов в каждой группе по проценту опроса. То есть если на адресе 10 приборов учета и все они обновили данные, то адрес будет в группе Опрос 80-100%, а если обновили данные только 5 приборов учета, то адрес будет в группе Опрос 40-60%.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 6</span></td>
+                                            <td scope="row">В блоке построены диаграммы, показывающие отношение групп адресов по проценту опроса на основании данных из таблицы блока 5. При нажатии на кнопку "Подробнее" осуществляется переход на выбранную страницу опроса сервера по приборам учета.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 7</span></td>
+                                            <td scope="row">В блоке представлена таблица, в которой указаны дата и время опроса сервера по базовым станциям и количество приборов учета на связи с ними (данные по всем базовым станциям суммируются). Также в блоке по этим данным построен график.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-12">
+                        <img style="max-width: 100%; height: auto;" class="border border-dark rounded" src="{% static 'images/guides/dataoverviewone.jpg' %}" alt="1">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <h6 class="mb-2 ms-2 text-center">Страница обзора данных для всей организации</h6>
+                        <div class="col-lg-4 col-12">
+                            <div class="table-responsive p-2 text-center">
+                                <table class="account-table table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="w-25">Номер Блока</th>
+                                            <th scope="col">Информация</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 1</span></td>
+                                            <td scope="row">В блоке указано общее по организации количество приборов учета, количество базовых станций и количество адресов, на которых установлены приборы учета. А также представлена таблица с этой информацией по каждому подразделению. При нажатии на кнопку в столбце "Подробнее" осуществляется переход на страницу выбранного подразделения.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 2</span></td>
+                                            <td scope="row">В блоке построены диаграммы, отображающие процентное отношение количества установленных ПУ и адресов установки ПУ по подразделениям.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 3</span></td>
+                                            <td scope="row">В блоке представлена таблица, в которой указаны дата и время опроса сервера по ПУ и сколько приборов учета за тот или иной опрос обновили данные.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 4</span></td>
+                                            <td scope="row">В блоке построен график на основании данных из таблицы блока 3.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 5</span></td>
+                                            <td scope="row">В блоке построены диаграммы, показывающие отношение ПУ, обновивших данные и нет, в процентном соотношении, за последние 3 опроса сервера по ПУ. При нажатии на кнопку "Подробнее" осуществляется переход на выбранную страницу опроса сервера по приборам учета.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 6</span></td>
+                                            <td scope="row">В блоке представлена таблица, в которой указаны дата и время опроса сервера и сколько адресов в каждой группе по проценту опроса. То есть если на адресе 10 приборов учета и все они обновили данные, то адрес будет в группе Опрос 80-100%, а если обновили данные только 5 приборов учета, то адрес будет в группе Опрос 40-60%.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 7</span></td>
+                                            <td scope="row">В блоке построены диаграммы, показывающие отношение групп адресов по проценту опроса на основании данных из таблицы блока 6.  При нажатии на кнопку "Подробнее" осуществляется переход на выбранную страницу опроса сервера по приборам учета.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 8</span></td>
+                                            <td scope="row">В блоке представлена таблица, в которой указаны дата и время опроса сервера по базовым станциям и количество приборов учета на связи с ними (данные по всем базовым станциям суммируются) по каждому подразделению. Также в блоке по этим данным построен график для каждого подразделения.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-12">
+                        <img style="max-width: 100%; height: auto;" class="border border-dark rounded" src="{% static 'images/guides/dataoverviewall.jpg' %}" alt="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="list-bs-tab-pane" role="tabpanel" aria-labelledby="list-bs-tab" tabindex="0">
+                    <div class="row">
+                        <h6 class="mb-2 ms-2 text-center">Страница списка базовых станций</h6>
+                        <div class="col-lg-4 col-12">
+                            <div class="table-responsive p-2 text-center">
+                                <table class="account-table table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="w-25">Номер Блока</th>
+                                            <th scope="col">Информация</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 1</span></td>
+                                            <td scope="row">В блоке представлена таблица с базовыми станциями подразделения. Каждое подразделение видит только свои базовые станции. При нажатии на кнопку "Подробнее" осуществляется переход на страницу информации по одной базовой станции.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-12">
+                        <img style="max-width: 100%; height: auto;" class="border border-dark rounded" src="{% static 'images/guides/bs-list-all.jpg' %}" alt="1">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h6 class="mb-2 ms-2 text-center">Страница информации по одной базовой станции</h6>
+                        <div class="col-lg-4 col-12">
+                            <div class="table-responsive p-2 text-center">
+                                <table class="account-table table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="w-25">Номер Блока</th>
+                                            <th scope="col">Информация</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 1</span></td>
+                                            <td scope="row">В блоке представлена таблица с данными по опросу базовых станций, а именно дата и время каждого опроса, способ опроса и количество приборов учета, которые были на связи с базовой станцией в данный момент. В таблице отображаются последние 10 опросов.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 2</span></td>
+                                            <td scope="row">В блоке построен график на основании данных из таблицы блока 2.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-12">
+                        <img style="max-width: 100%; height: auto;" class="border border-dark rounded" src="{% static 'images/guides/bs-list-one.jpg' %}" alt="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="list-points-tab-pane" role="tabpanel" aria-labelledby="list-points-tab" tabindex="0">
+                    <div class="row">
+                        <h6 class="mb-2 ms-2 text-center">Страница списка адресов приборов учета</h6>
+                        <div class="col-lg-4 col-12">
+                            <div class="table-responsive p-2 text-center">
+                                <table class="account-table table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="w-25">Номер Блока</th>
+                                            <th scope="col">Информация</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 1</span></td>
+                                            <td scope="row">В блоке представлено поле поиска адресов установки. Поиск осуществляется по коду ФИАС или части адреса. В случае, когда адреса найдены в блоке 2 появляется таблица с результатами поиска.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 2</span></td>
+                                            <td scope="row">В блоке 2 представлена таблица с результатами поиска. Результаты отсортированы по количеству установленных приборов учета. Каждое подразделение видит адреса только своего подразделения. При нажатии на кнопку "Подробнее" осуществляется переход на страницу информации по одному адресу.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-12">
+                        <img style="max-width: 100%; height: auto;" class="border border-dark rounded" src="{% static 'images/guides/address-list-all.jpg' %}" alt="1">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h6 class="mb-2 ms-2 text-center">Страница информации по одному адресу</h6>
+                        <div class="col-lg-4 col-12">
+                            <div class="table-responsive p-2 text-center">
+                                <table class="account-table table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="w-25">Номер Блока</th>
+                                            <th scope="col">Информация</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 1</span></td>
+                                            <td scope="row">В блоке представлена таблица, в которой указаны адрес, код ФИАС и количество установленных приборов учета.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 2</span></td>
+                                            <td scope="row">В блоке представлена таблица с информацией по установленным приборам учета по этому адресу. А именно точный адрес установки, номер ПУ и результаты по последним 3 опросам сервера. В случае, если по прибору учета не было обновления данных в ячейке указывается "Нет изменений".</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 3</span></td>
+                                            <td scope="row">В блоке построены диаграммы на основе 3 столбцов с результатами опроса в таблице блока 2. На диаграммах отображается процент обновления данных по данному адресу для каждого опроса.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-12">
+                        <img style="max-width: 100%; height: auto;" class="border border-dark rounded" src="{% static 'images/guides/address-list-one.jpg' %}" alt="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="info-pu-tab-pane" role="tabpanel" aria-labelledby="info-pu-tab" tabindex="0">
+                    <div class="row">
+                        <h6 class="mb-2 ms-2 text-center">Страница информации по прибору учета</h6>
+                        <div class="col-lg-4 col-12">
+                            <div class="table-responsive p-2 text-center">
+                                <table class="account-table table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="w-25">Номер Блока</th>
+                                            <th scope="col">Информация</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 1</span></td>
+                                            <td scope="row">В блоке представлено поле поиска прибора учета. Поиск осуществляется по номеру прибору учета. Каждое подразделение видит только свои приборы учета. В случае, когда прибор учета найден, появляются блоки 2,3,4.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 2</span></td>
+                                            <td scope="row">В блоке представлена таблица с данными по найденному прибору учета.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 3</span></td>
+                                            <td scope="row">В блоке построен график на основании данных из таблицы блока 4.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 4</span></td>
+                                            <td scope="row">В блоке представлена таблица с информацией по опросу прибора учета. А именно вид опроса, дата опроса, показания и время и дата, когда данные были записаны на сервер.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-12">
+                        <img style="max-width: 100%; height: auto;" class="border border-dark rounded" src="{% static 'images/guides/info-pu.jpg' %}" alt="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="data-on-map-tab-pane" role="tabpanel" aria-labelledby="data-on-map-tab" tabindex="0">
+                    <div class="row">
+                        <h6 class="mb-2 ms-2 text-center">Страница данных на карте</h6>
+                        <div class="col-lg-4 col-12">
+                            <div class="table-responsive p-2 text-center">
+                                <table class="account-table table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="w-25">Номер Блока</th>
+                                            <th scope="col">Информация</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 1</span></td>
+                                            <td scope="row">В блоке представлены кнопки, генерирующие разные виды данных на карте.<br>
+                                                "Количество ПУ по адресам" сформирует карту, на которой будут отмечены все адреса установки ПУ. При нажатии на одну метку отобразится подсказка, в которой указан адрес и количество установленных ПУ.<br>
+                                                "Адреса по проценту опроса" сформирует карту, на которой будут отмечены все адреса установки ПУ, но цвет метки будет указывать на процент опроса ПУ: красный 0-20%, оранжевый 20-40%, желтый 40-60%, светло-зеленый 60-80%, зеленый 80-100%. При нажатии на одну метку отобразится подсказка, в которой указан адрес, количество ПУ, обновившие данные, количество установленных ПУ и процент опроса.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 2</span></td>
+                                            <td scope="row">В блоке формируется карта с различными данными. При загрузке страницы формируется карта с базовыми станциями (фиолетовые метки).<br>
+                                                В левом верхнему углу находятся инструменты работы с картой.
+                                                В правом верхнем углу отображается управление группами меток, а также выбор карты: стандартная или спутниковая.
+                                                В правом нижнем углу отображаются координаты курсора.<br>
+                                                Для оптимизации отображения карты, близкие друг к другу метки группируются. Группа отображается кругом.
+                                                Внутри круга указано количество объединенных меток. Цвет круга зависит от количества объединенных меток и не имеет отношения к проценту опроса.<br>
+                                                Каждое подразделение видит только свои адреса установки приборов учета на карте.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"></td>
+                                            <td scope="row">Справа отображены различные варианты карты. Некоторые метки могут быть в неправильных местах.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-12">
+                            <img style="max-width: 100%; height: auto;" class="border border-dark rounded mb-2" src="{% static 'images/guides/data-on-map.jpg' %}" alt="1">
+                            <img style="max-width: 100%; height: auto;" class="border border-dark rounded mb-2" src="{% static 'images/guides/data-on-map-2.jpg' %}" alt="1">
+                            <img style="max-width: 100%; height: auto;" class="border border-dark rounded mb-2" src="{% static 'images/guides/data-on-map-3.jpg' %}" alt="1">
+                            <img style="max-width: 100%; height: auto;" class="border border-dark rounded mb-2" src="{% static 'images/guides/data-on-map-4.jpg' %}" alt="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="server-parse-tab-pane" role="tabpanel" aria-labelledby="server-parse-tab" tabindex="0">
+                    <div class="row">
+                        <h6 class="mb-2 ms-2 text-center">Страница опросов сервера</h6>
+                        <div class="col-lg-4 col-12">
+                            <div class="table-responsive p-2 text-center">
+                                <table class="account-table table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="w-25">Номер Блока</th>
+                                            <th scope="col">Информация</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 1</span></td>
+                                            <td scope="row">В блоке представлены кнопки запуска опросов.
+                                                Опрос по базовым станциям собирает с сервера данные о количестве приборов учета, находящихся на связи с каждой базовой станицей.<br>
+                                                Опрос по приборам учета собирает данные о каждом приборе учета, показания и время и дату записи их на сервер.<br>
+                                                <b>Данный блок доступен не всем пользователям.</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 2</span></td>
+                                            <td scope="row">В блоке представлена таблица с историей опроса базовых станций (последние 5 опросов).</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 3</span></td>
+                                            <td scope="row">В блоке представлена таблица с историей опроса приборов учета (последние 5 опросов). При нажатии на кнопку "Подробнее" осуществляется переход на страницу выбранного опроса.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-12">
+                        <img style="max-width: 100%; height: auto;" class="border border-dark rounded" src="{% static 'images/guides/server-parse.jpg' %}" alt="1">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h6 class="mb-2 ms-2 text-center">Страница опроса сервера по приборам учета</h6>
+                        <div class="col-lg-4 col-12">
+                            <div class="table-responsive p-2 text-center">
+                                <table class="account-table table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="w-25">Номер Блока</th>
+                                            <th scope="col">Информация</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 1</span></td>
+                                            <td scope="row">В блоке представлена таблица по всей организации с информацией о количестве приборов учета, которые обновили данные на момент опроса сервера. При нажатии кнопки "Скачать" формируется xlsx-отчет по всей организации, в котором указаны все приборы учета, обновили ли они данные, если да, то указаны последние показания и время и дата их записи на сервер.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 2</span></td>
+                                            <td scope="row">В блоке построена диаграмма на основе данных из блока 1.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 3</span></td>
+                                            <td scope="row">В блоке представлена таблица по подразделениям с информацией о количестве приборов учета, которые обновили данные на момент опроса сервера. При нажатии кнопки "Скачать" формируется xlsx-отчет по выбранному подразделению, в котором указаны все приборы учета, обновили ли они данные, если да, то указаны последние показания и время и дата их записи на сервер.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 4</span></td>
+                                            <td scope="row">В блоке построена диаграмма на основе данных из блока 3.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 5</span></td>
+                                            <td scope="row">В блоке представлена таблица по всей организации с информацией о количестве адресов установки прибора учетов по проценту опроса. При нажатии кнопки "Скачать" формируется xlsx-отчет по всей организации, в котором указаны адреса установки приборов учета, количество установленных ПУ на адресе, количество ПУ, обновивших данные, и процент опроса адреса.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 6</span></td>
+                                            <td scope="row">В блоке построена диаграмма на основе данных из блока 5.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 7</span></td>
+                                            <td scope="row">В блоке представлена таблица по подразделениям с информацией о количестве адресов установки прибора учетов по проценту опроса. При нажатии кнопки "Скачать" формируется xlsx-отчет по выбранному подразделению, в котором указаны адреса установки приборов учета, количество установленных ПУ на адресе, количество ПУ, обновивших данные, и процент опроса адреса.</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" class="w-25"><span style="border-radius: var(--bs-badge-border-radius);" class="badge text-bg-danger fs-6">Блок 8</span></td>
+                                            <td scope="row">В блоке построена диаграмма на основе данных из блока 7.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-12">
+                        <img style="max-width: 100%; height: auto;" class="border border-dark rounded" src="{% static 'images/guides/server-parse-one.jpg' %}" alt="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,387 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_content %}
+    <div class="row mb-4">
+        <div class="col-lg-6 col-12">
+            <div class="custom-block custom-block-balance">
+                <small>Your Balance</small>
+
+                <h2 class="mt-2 mb-3">$254,800</h2>
+
+                <div class="custom-block-numbers d-flex align-items-center">
+                    <span>****</span>
+                    <span>****</span>
+                    <span>****</span>
+                    <p>2560</p>
+                </div>
+
+                <div class="d-flex">
+                    <div>
+                        <small>Valid Date</small>
+                        <p>12/2028</p>
+                    </div>
+
+                    <div class="ms-auto">
+                        <small>Card Holder</small>
+                        <p>Thomas</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="custom-block bg-white">
+                <h5 class="mb-4">History</h5>
+
+                <div id="pie-chart"></div>
+            </div>
+
+            <div class="custom-block bg-white">
+                <div id="chart"></div>
+            </div>
+            <div class="custom-block bg-white">
+                <h5 class="mb-4">Account Activities</h5>
+
+                <div class="table-responsive">
+                    <table class="account-table table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+
+                                <th scope="col">Time</th>
+
+                                <th scope="col">Description</th>
+
+                                <th scope="col">Payment Type</th>
+
+                                <th scope="col">Amount</th>
+
+                                <th scope="col">Balance</th>
+
+                                <th scope="col">Status</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td scope="row">July 5, 2023</td>
+
+                                <td scope="row">10:00 PM</td>
+
+                                <td scope="row">Shopping</td>
+
+                                <td scope="row">C2C Transfer</td>
+
+                                <td class="text-danger" scope="row">
+                                    <span class="me-1">-</span>
+                                    $100.00
+                                </td>
+
+                                <td scope="row">$5,500.00</td>
+
+                                <td scope="row">
+                                    <span class="badge text-bg-danger">
+                                        Pending
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td scope="row">July 2, 2023</td>
+
+                                <td scope="row">10:42 AM</td>
+
+                                <td scope="row">Food Delivery</td>
+
+                                <td scope="row">Mobile Reload</td>
+
+                                <td class="text-success" scope="row">
+                                    <span class="me-1">+</span>
+                                    $250
+                                </td>
+
+                                <td scope="row">$5,600.00</td>
+
+                                <td scope="row">
+                                    <span class="badge text-bg-success">
+                                        Success
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td scope="row">June 28, 2023</td>
+
+                                <td scope="row">8:20 PM</td>
+
+                                <td scope="row">Billing</td>
+
+                                <td scope="row">Goverment</td>
+
+                                <td class="text-success" scope="row">
+                                <span class="me-2">+</span>$50</td>
+
+                                <td scope="row">$5,350.00</td>
+
+                                <td scope="row">
+                                    <span class="badge text-bg-success">
+                                        Success
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td scope="row">June 24, 2023</td>
+
+                                <td scope="row">10:48 PM</td>
+
+                                <td scope="row">Shopee</td>
+
+                                <td scope="row">QR Code</td>
+
+                                <td class="text-danger" scope="row">
+                                <span class="me-2">-</span>$380</td>
+
+                                <td scope="row">$5,300.00</td>
+
+                                <td scope="row">
+                                    <span class="badge text-bg-dark">
+                                        Cancelled
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">Prev</span>
+                                </a>
+                            </li>
+
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+
+                            <li class="page-item">
+                                <a class="page-link" href="#">4</a>
+                            </li>
+
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+            </div>
+            <div class="custom-block custom-block-faq">
+                <h5 class="mb-4">Frequently Asked Questions</h5>
+
+                <strong class="d-block mb-2">What is Mini Finance Template?</strong>
+
+                <p>Mini Finance Template includes total 6 HTML pages for your customizations. It is free of charge provided by Tooplate website.</p>
+
+                <strong class="d-block mt-3 mb-2">What is Free HTML Template?</strong>
+
+                <p>Free HTML Template is a ready-made web page based on HTML CSS codes.</p>
+
+                <strong class="d-block mt-3 mb-2">What is the best code editor?</strong>
+
+                <p>Popular code editors are Dreamweaver, Notepad++, Visual Studio Code, Rapid CSS, Sublime Text and Atom to edit HTML CSS JS codes and put in your own web contents.</p>
+
+                 <strong class="d-block mt-3 mb-2">Are all templates free to download?</strong>
+
+                 <p>Yes, all CSS templates are 100% free to download and use for your websites. You can also use them for learning HTML, CSS, and JavaScripts.</p>
+            </div>
+        </div>
+    <div class="col-lg-6 col-12">
+            <div class="custom-block bg-white">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="true">Profile</button>
+                    </li>
+
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-tab-pane" type="button" role="tab" aria-controls="password-tab-pane" aria-selected="false" tabindex="-1">Password</button>
+                    </li>
+
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification-tab-pane" type="button" role="tab" aria-controls="notification-tab-pane" aria-selected="false" tabindex="-1">Notification</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                        <h6 class="mb-4">User Profile</h6>
+
+                        <form class="custom-form profile-form" action="#" method="post" role="form">
+                            <input class="form-control" type="text" name="profile-name" id="profile-name" placeholder="John Doe">
+
+                            <input class="form-control" type="email" name="profile-email" id="profile-email" placeholder="Johndoe@gmail.com">
+
+                            <div class="input-group mb-1">
+                                <img src="{% static 'images/profile/senior-man-white-sweater-eyeglasses.jpg' %}" class="profile-image img-fluid" alt="">
+
+                                <input type="file" class="form-control" id="inputGroupFile02">
+                            </div>
+
+                            <div class="d-flex">
+                                <button type="button" class="form-control me-3">
+                                    Reset
+                                </button>
+
+                                <button type="submit" class="form-control ms-2">
+                                    Update
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="password-tab-pane" role="tabpanel" aria-labelledby="password-tab" tabindex="0">
+                        <h6 class="mb-4">Password</h6>
+
+                        <form class="custom-form password-form" action="#" method="post" role="form">
+                            <input type="password" name="password" id="password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Current Password" required="">
+
+                            <input type="password" name="confirm_password" id="confirm_password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="New Password" required="">
+
+                            <input type="password" name="confirm_password" id="confirm_password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Confirm Password" required="">
+
+                            <div class="d-flex">
+                                <button type="button" class="form-control me-3">
+                                    Reset
+                                </button>
+
+                                <button type="submit" class="form-control ms-2">
+                                    Update Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="notification-tab-pane" role="tabpanel" aria-labelledby="notification-tab" tabindex="0">
+                        <h6 class="mb-4">Notification</h6>
+
+                        <form class="custom-form notification-form" action="#" method="post" role="form">
+
+                            <div class="form-check form-switch d-flex mb-3 ps-0">
+                                <label class="form-check-label" for="flexSwitchCheckCheckedOne">Account activity</label>
+
+                                <input class="form-check-input ms-auto" type="checkbox" name="form-check-input" role="switch" id="flexSwitchCheckCheckedOne" checked="">
+                            </div>
+
+                            <div class="form-check form-switch d-flex mb-3 ps-0">
+                                <label class="form-check-label" for="flexSwitchCheckCheckedTwo">Payment updated</label>
+
+                                <input class="form-check-input ms-auto" type="checkbox" name="form-check-input" role="switch" id="flexSwitchCheckCheckedTwo" checked="">
+                            </div>
+
+                            <div class="d-flex mt-4">
+                                <button type="button" class="form-control me-3">
+                                    Reset
+                                </button>
+
+                                <button type="submit" class="form-control ms-2">
+                                    Update Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+    <script type="text/javascript">
+        var options = {
+          series: [13, 43, 22],
+          chart: {
+          width: 380,
+          type: 'pie',
+        },
+        labels: ['Balance', 'Expense', 'Credit Loan',],
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+        };
+
+        var chart = new ApexCharts(document.querySelector("#pie-chart"), options);
+        chart.render();
+    </script>
+
+    <script type="text/javascript">
+        var options = {
+          series: [{
+          name: 'Income',
+          data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
+        }, {
+          name: 'Expense',
+          data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
+        }, {
+          name: 'Transfer',
+          data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
+        }],
+          chart: {
+          type: 'bar',
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '55%',
+            endingShape: 'rounded'
+          },
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        },
+        yaxis: {
+          title: {
+            text: '$ (thousands)'
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return "$ " + val + " thousands"
+            }
+          }
+        }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    </script>
+{% endblock %}
+

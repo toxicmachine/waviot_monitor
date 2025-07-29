@@ -1,0 +1,15 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'serverroom/css/style.css' %}?20240628">
+</head>
+<body>
+    <form method="post" class="search">
+      {% csrf_token %}
+      <input id="save_button" type="submit" value="ПУСК" class="buttonSave">
+    </form>
+</body>
+</html>

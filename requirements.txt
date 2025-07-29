@@ -1,0 +1,10 @@
+django
+requests
+psycopg
+python-decouple
+pyjwt
+requests-oauth2client
+pytz
+folium
+openpyxl
+dadata

@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_content %}
+    <div class="row mb-4">
+        <div class="col-lg-4 col-12">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Данные по организации</h6>
+                    <p class="d-flex flex-wrap mb-2">
+                        <strong>Количество приборов учета:</strong>
+                        <span id="pu_total_count">{{count_pu}}</span>
+                    </p>
+                    <p class="d-flex flex-wrap mb-2">
+                        <strong>Количество базовых станций:</strong>
+                        <span>{{count_bs}}</span>
+                    </p>
+                    <p class="d-flex flex-wrap mb-2">
+                        <strong>Количество адресов приборов учета:</strong>
+                        <span>{{count_points}}</span>
+                    </p>
+                </div>
+                <div class="table-responsive p-2">
+                    <table id="device-count-table" class="account-table table">
+                        <thead>
+                            <tr>
+                                <th style="max-width:none; font-size: 10px;" rowspan="3" scope="col">Подразделение</th>
+                                <th style="font-size: 10px;" colspan="3" scope="colgroup">Количество</th>
+                                <th style="max-width:none; font-size: 10px;" rowspan="3" scope="col">Подробнее</th>
+                            </tr>
+                            <tr>
+                                <th style="font-size: 10px;" scope="col">ПУ</th>
+                                <th style="font-size: 10px;" scope="col">БС</th>
+                                <th style="font-size: 10px;" scope="col">Адресов</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for elem in all_dep_counts_info %}
+                            <tr>
+                                <td scope="row">{{elem.department.name}}</td>
+                                <td scope="row">{{elem.device_count}}</td>
+                                <td scope="row">{{elem.bs_count}}</td>
+                                <td scope="row">{{elem.point_count}}</td>
+                                <td scope="row">
+                                    <a href="{{elem.department.id}}/" target="_blank" style="padding: 0.2rem 0.6rem; font-size: small;" class="btn profile-custom-btn">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-lg-4 col-12">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Распределение ПУ <br> по подразделениям</h6>
+                    <div id="pie-chart"></div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-lg-4 col-12">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Распределение адресов ПУ <br> по подразделениям</h6>
+                    <div id="simple-line-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-12 col-12">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Сведения по организации о количестве ПУ, которые обновили данные</h6>
+                    <div class="table-responsive p-2 text-center">
+                        <table id="pu-parse-count-table" class="account-table table">
+                            <thead>
+                                <tr>
+                                    {% for parsed in last_pu_parses %}
+                                        <th scope="col">{{parsed.parse_end_time}}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                {% for elem in all_dep_devices_history %}
+                                    <td scope="row" id="parse-order-{{forloop.counter}}">{{elem}}</td>
+                                {% endfor %}
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div id="pu-parse-chart"></div>
+                        <span>* запись ПУ обновляется только в случае, если есть новая запись на сервере Waviot</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        {% for stat in all_dep_points_stat %}
+            <div class="col-lg-4 col-6">
+                <div class="custom-block bg-white">
+                    <div class="custom-block custom-block-profile bg-white">
+                        <h6 class="text-center mb-3">{{stat.parse_object.parse_end_time}}</h6>
+                        <div id="pie-chart-pu-stat-{{forloop.counter0}}"></div>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'parse-view-all' stat.parse_object.pk %}" target="_blank" class="btn profile-custom-btn">
+                                Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-12 col-12">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Сведения об обновлении данных по адресам установки ПУ и диаграммы к ним</h6>
+                    <div class="table-responsive p-2 text-center">
+                        <table id="address-parse-count-table" class="account-table table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Дата опроса ПУ</th>
+                                    <th scope="col">Опрос 0–20 %</th>
+                                    <th scope="col">Опрос 20–40 %</th>
+                                    <th scope="col">Опрос 40–60 %</th>
+                                    <th scope="col">Опрос 60–80 %</th>
+                                    <th scope="col">Опрос 80–100 %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in all_dep_points_stat %}
+                                    <tr>
+                                    <td scope="row">{{stat.parse_object.parse_end_time}}</td>
+                                    {% for stat_item in stat.parse_points_stat %}
+                                       <td scope="row">{{stat_item.count}}</td>
+                                    {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <span>* в таблице приведен подсчет адресов установки ПУ, по соответствующему проценту</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        {% for stat in all_dep_points_stat %}
+            <div class="col-lg-4 col-6">
+                <div class="custom-block bg-white">
+                    <div class="custom-block custom-block-profile bg-white">
+                        <h6 class="text-center mb-3">{{stat.parse_object.parse_end_time}}</h6>
+                        <div id="pie-chart-points-stat-{{forloop.counter0}}"></div>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'parse-view-all' stat.parse_object.pk %}" target="_blank" class="btn profile-custom-btn">
+                                Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-12 col-12">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Количество ПУ подразделений на связи в момент опроса сервера по базовым станциям</h6>
+                    <table id="bs-history-table" class="account-table table">
+                        <thead>
+                            <tr>
+                                <th style="max-width:none;" scope="col">Подразделение</th>
+                                {% for parsed in last_bs_parses %}
+                                    <th scope="col">{{parsed.parse_end_time}}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for elem in all_dep_bs_last_parses %}
+                            <tr>
+                                <td scope="row">{{elem.department.name}}</td>
+                                {% for counter in elem.device_counts %}
+                                    <td scope="row">
+                                        {% if counter is not None %}
+                                            {{ counter }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% for elem in all_dep_bs_last_parses %}
+                        <div class="text-center">{{elem.department.name}}</div>
+                        <div id="chart-{{forloop.counter0}}"></div>
+                        <br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'pages/js/for-data-overview-all.js' %}?20250620"></script>
+{% endblock %}

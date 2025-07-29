@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_content %}
+    <div class="row mb-4">
+        <div class="col-lg-10 col-12">
+            <div class="custom-block bg-white">
+                <div class="table-responsive p-2">
+                    <table class="account-table table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Подразделение</th>
+                                <th scope="col">Строение</th>
+                                <th scope="col">Код ФИАС</th>
+                                <th scope="col">Количество ПУ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="row">{{fias_info.department.name}}</td>
+                                <td scope="row">{{fias_info.building_address}}</td>
+                                <td scope="row">{{fias_info.fias}}</td>
+                                <td scope="row">{{fias_info.device_count}}</td>
+                            </tr>
+                            <tr><td></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-responsive p-2">
+                    <table id="pu-info-table" class="account-table table">
+                        <thead>
+                            <tr>
+                                <th rowspan="3" scope="col">Адрес установки</th>
+                                <th rowspan="3" scope="col">Номер ПУ</th>
+                                <th rowspan="3" scope="col">Тип прибора учета</th>
+                                <th colspan="3" scope="colgroup">Время и дата опроса сервера</th>
+                            </tr>
+                            <tr>
+                                {% for parse in last_parsers%}
+                                    <th id="time-{{forloop.counter}}" scope="col">{{ parse.parse_end_time }}</th>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <th colspan="3" scope="colgroup">Время и дата последней записи с ПУ на сервер</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for device in fias_devices%}
+                            <tr>
+                                <td scope="row">{{device.address_1c}}</td>
+                                <td scope="row">{{device.serial_number}}</td>
+                                <td scope="row">{{device.variety}}</td>
+                                {% for history in device.histories%}
+                                    {% if history is not None %}
+                                        <td scope="row">{{history.last_record_time}}</td>
+                                    {% else %}
+                                        <td scope="row">Нет изменений</td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-12">
+            <div class="custom-block bg-white text-center">
+                <h7>Диаграммы<br> последних опросов сервера в таблице</h7>
+                <div class="p-2" id="circle-chart1">
+                </div>
+                <div class="p-2" id="circle-chart2">
+                </div>
+                <div class="p-2" id="circle-chart3">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'pages/js/for-address-point-info.js' %}?20250610"></script>
+{% endblock %}

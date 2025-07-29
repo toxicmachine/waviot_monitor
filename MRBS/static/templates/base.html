@@ -1,0 +1,127 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Tooplate">
+
+        <title>{{title}}</title>
+
+        <!-- CSS FILES -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700&display=swap" rel="stylesheet">
+        <link type="text/css" href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+        <link type="text/css" href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet" />
+        <link type="text/css" href="{% static 'css/apexcharts.css' %}" rel="stylesheet" />
+        <link type="text/css" href="{% static 'css/tooplate-mini-finance.css' %}" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="navbar sticky-top flex-md-nowrap">
+            <div class="col-md-3 col-lg-3 me-0 px-3 fs-6">
+                <a class="navbar-brand" href="index.html">
+                    <i class="bi-asterisk"></i>
+                    {{ header }}
+                </a>
+            </div>
+
+            <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+        </header>
+        <div class="container-fluid">
+            <div class="row">
+                <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                    <div class="position-sticky py-2 px-3 sidebar-sticky">
+                        <ul class="nav flex-column h-100">
+                             <li class="nav-item">
+                                <a {% if current_urlname == "data-overview" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'data-overview' %}">
+                                    <i class="bi-clipboard-data me-2"></i>
+                                    Обзор данных
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a {% if current_urlname == "base-stations" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'base-stations' %}">
+                                    <i class="bi-list-stars me-2"></i>
+                                    Список базовых станций
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a {% if current_urlname == "address-points-stat" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'address-points-stat' %}">
+                                    <i class="bi-list-stars me-2"></i>
+                                    Список адресов ПУ
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a {% if current_urlname == "info-device" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'info-device' %}">
+                                    <i class="bi-info-square me-2"></i>
+                                    Информация о ПУ
+                                </a>
+                            </li>
+
+                             <li class="nav-item">
+                                 <a class="nav-link" href="setting.html">
+                                     <i class="bi-geo-alt me-2"></i>
+                                     Данные на карте
+                                 </a>
+                             </li>
+
+                            <li class="nav-item">
+                                <a {% if current_urlname == "start-request" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'start-request' %}">
+                                    <i class="bi-cursor me-2"></i>
+                                    Опросы сервера
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="setting.html">
+                                    <i class="bi-plus-circle me-2"></i>
+                                    Добавление ПУ
+                                </a>
+                            </li>
+
+                            <li class="nav-item border-top mt-auto pt-2">
+                                <a {% if current_urlname == "help" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'help' %}">
+                                    <i class="bi-question-circle me-2"></i>
+                                    Использование сервиса
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a {% if current_urlname == "profile" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'users:profile' %}">
+                                    <i class="bi-person me-2"></i>
+                                    Настройки профиля
+                                </a>
+                            </li>
+
+                            <form id="quitForm" style="display: contents;" method="post" action="{% url 'users:logout' %}">
+                                {% csrf_token %}
+                                <li class="nav-item">
+                                    <a style="cursor:pointer;" class="nav-link" onclick="quitForm(); return false;"><i class="bi-box-arrow-left me-2"></i>Выход</a>
+                                </li>
+                            </form>
+                        </ul>
+                    </div>
+                </nav>
+
+                <main class="main-wrapper col-md-9 ms-sm-auto py-4 col-lg-10 px-md-4 border-start">
+                {% block main_content %} {% endblock %}
+                </main>
+            </div>
+        </div>
+
+        <!-- JAVASCRIPT FILES -->
+        <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/apexcharts.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/custom.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/graphs.js' %}?20250620"></script>
+        {% block extra_scripts %} {% endblock %}
+    </body>
+</html>

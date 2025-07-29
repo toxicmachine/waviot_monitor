@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_content %}
+    <div class="row mb-4">
+        {% for stat in all_dep_points_stat %}
+        <div class="col-lg-12 col-12">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center">Опрос сервера Waviot по приборам учета <br> {{stat.parse_object.parse_end_time}}</h6>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-6 col-12">
+            <div class="custom-block bg-white" style="min-height: 300px;">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Сведения о количестве ПУ, которые обновили данные</h6>
+                    <div class="table-responsive p-2 text-center">
+                        <table id="parse-pu-count-table-all" class="account-table table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Дата опроса ПУ</th>
+                                    <th scope="col">Кол-во ПУ, обновивших данные</th>
+                                    <th scope="col">Кол-во ПУ в организации</th>
+                                    <th scope="col">Отчет по ПУ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td scope="row">{{request_parse_object.parse_end_time}}</td>
+                                <td scope="row" id="pu_parsed_count">{{all_pu_parse_count_history}}</td>
+                                <td scope="row" id="pu_total_count">{{count_pu}}</td>
+                                <td scope="row">
+                                    <a href="{% url 'download-report-xlsx' report_type='pu-parse-all-devices' request_dep=0 parse_object=request_parse_object.pk %}" target="_blank" style="padding: 0.2rem 0.6rem; font-size: small;" class="btn profile-custom-btn">
+                                        Скачать <i class="bi bi-download"></i>
+                                    </a>
+                                </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <span>* большое количество ПУ замедляет формирование отчета</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-6">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Диаграмма обновления данных ПУ по организации</h6>
+                    <div id="stack-bar-chart-pu-stat-all"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-6 col-12">
+            <div class="custom-block bg-white" style="min-height: 664px;">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Сведения по подразделениям о количестве ПУ, которые обновили данные</h6>
+                    <br>
+                    <div class="table-responsive p-2 text-center">
+                        <table id="parse-pu-count-table-for-dep" class="account-table table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Подразделение</th>
+                                    <th scope="col">Кол-во ПУ, обновивших данные</th>
+                                    <th scope="col">Кол-во ПУ в подразделении</th>
+                                    <th scope="col">Отчет по ПУ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for elem in all_dep_devices_history %}
+                                <tr>
+                                <td scope="row">{{elem.department}}</td>
+                                <td scope="row">{{elem.parse_count_devices}}</td>
+                                <td scope="row">{{elem.count_devices}}</td>
+                                <td scope="row">
+                                    <a href="{% url 'download-report-xlsx' report_type='pu-parse-all-devices' request_dep=elem.department.id parse_object=request_parse_object.pk %}" target="_blank" style="padding: 0.2rem 0.6rem; font-size: small;" class="btn profile-custom-btn">
+                                        Скачать <i class="bi bi-download"></i>
+                                    </a>
+                                </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <span>* большое количество ПУ у подразделения замедляет формирование отчета</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-6">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Диаграмма обновления данных ПУ по подразделениям</h6>
+                    <div id="stack-bar-chart-pu-stat-for-dep"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-6 col-12">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Сведения об обновлении данных по адресам установки ПУ по организации</h6>
+                    <div class="table-responsive p-2 text-center">
+                        <table id="address-parse-count-table-all" class="account-table table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Дата опроса ПУ</th>
+                                    <th scope="col">Опрос 00–20 %</th>
+                                    <th scope="col">Опрос 20–40 %</th>
+                                    <th scope="col">Опрос 40–60 %</th>
+                                    <th scope="col">Опрос 60–80 %</th>
+                                    <th scope="col">Опрос 80–100 %</th>
+                                    <th style="max-width:none;" scope="col">Отчет по адресам</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in all_dep_points_stat %}
+                                    <tr>
+                                    <td scope="row">{{stat.parse_object.parse_end_time}}</td>
+                                    {% for stat_item in stat.parse_points_stat %}
+                                       <td scope="row">{{stat_item.count}}</td>
+                                    {% endfor %}
+                                    <td scope="row" style="max-width:none;">
+                                        <a href="{% url 'download-report-xlsx' report_type='pu-parse-all-address-points' request_dep=0 parse_object=stat.parse_object.pk %}" target="_blank" style="padding: 0.2rem 0.6rem; font-size: small;" class="btn profile-custom-btn">
+                                            Скачать <i class="bi bi-download"></i>
+                                        </a>
+                                    </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <span>* в таблице приведен подсчет адресов установки ПУ, по соответствующему проценту</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-6">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Диаграмма обновления данных по адресам установки ПУ по организации</h6>
+                    <div id="stack-bar-chart-points-stat-all"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-6 col-12">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Сведения об обновлении данных по адресам установки ПУ по подразделениям</h6>
+                    <div class="table-responsive p-2 text-center">
+                        <table id="address-parse-count-table-deps" class="account-table table">
+                            <thead>
+                                <tr>
+                                    <th style="max-width:none; font-size: 10px;" rowspan="3" scope="col">Подразделение</th>
+                                    <th style="font-size: 10px;" colspan="5" scope="colgroup">Количество адресов по проценту опроса</th>
+                                    <th style="max-width:none; font-size: 10px;" rowspan="3" scope="col">Отчет по адресам</th>
+                                </tr>
+                                <tr>
+                                    <th style="font-size: 10px;" scope="col">Опрос 00–20 %</th>
+                                    <th style="font-size: 10px;" scope="col">Опрос 20–40 %</th>
+                                    <th style="font-size: 10px;" scope="col">Опрос 40–60 %</th>
+                                    <th style="font-size: 10px;" scope="col">Опрос 60–80 %</th>
+                                    <th style="font-size: 10px;" scope="col">Опрос 80–100 %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for elem in all_dep_points_stat_for_parse %}
+                                <tr>
+                                    <td scope="row">{{elem.department.name}}</td>
+                                    {% for stat_all in elem.stat %}
+                                        {% for stat in stat_all.parse_points_stat %}
+                                            <td scope="row">{{stat.count}}</td>
+                                        {% endfor %}
+                                        <td scope="row" style="max-width:none;">
+                                            <a href="{% url 'download-report-xlsx' report_type='pu-parse-all-address-points' request_dep=elem.department.id parse_object=stat_all.parse_object.pk %}" target="_blank" style="padding: 0.2rem 0.6rem; font-size: small;" class="btn profile-custom-btn">
+                                                Скачать <i class="bi bi-download"></i>
+                                            </a>
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <span>* в таблице приведен подсчет адресов установки ПУ, по соответствующему проценту</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-lg-6 col-6">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white">
+                    <h6 class="text-center mb-3">Диаграмма обновления данных по адресам установки ПУ по подразделениям</h6>
+                    <div id="stack-bar-chart-points-stat"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'pages/js/for-server-parse-hpu-all.js' %}?20250704"></script>
+{% endblock %}

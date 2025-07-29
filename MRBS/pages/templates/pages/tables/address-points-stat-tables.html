@@ -1,0 +1,32 @@
+{% load static %}
+    {% if received %}
+    <h5 class="mb-2 ms-2 text-center">Найденные адреса в вашем подразделении</h5>
+    <div class="table-responsive p-2">
+        <table class="account-table table">
+            <thead>
+                <tr>
+                    <th scope="col">Подразделение</th>
+                    <th scope="col">Код ФИАС</th>
+                    <th scope="col">Адрес строения</th>
+                    <th scope="col">Количество ИПУ</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for elem in request_address %}
+                <tr>
+                    <td scope="row">{{elem.department}}</td>
+                    <td scope="row">{{elem.fias}}</td>
+                    <td scope="row">{{elem.building_address}}</td>
+                    <td scope="row">{{elem.device_count}}</td>
+                    <td scope="row">
+                        <a href="address-point-info/{{elem.pk}}/" target="_blank" class="btn profile-custom-btn">Подробнее</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <h6 class="mb-2 ms-2 text-center">Адрес не найден!</h6>
+    {% endif %}

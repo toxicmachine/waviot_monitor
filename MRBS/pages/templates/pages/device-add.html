@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_content %}
+    <div class="row mb-4">
+        <div class="col-lg-12 col-12">
+            <div class="custom-block bg-white">
+                <h5 class="mb-2 ms-2">Добавление приборов учета</h5>
+                <div class="custom-block custom-block-profile bg-white">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade active show" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                            <form id="file_input" class="d-flex custom-form profile-form" role="form" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form.file_field }}
+                                <button style="max-width: 150px;" type="submit" class="form-control ms-2">ДОБАВИТЬ</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                  <div id="spinner-one" class="spinner-border text-tosk" role="status" hidden="">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <span id="success-message" class="badge text-bg-success" hidden="">Обработка файла с ПУ прошла успешно!</span>
+                  <span id="fail-message" class="badge text-bg-danger" hidden="">При обработке файла с ПУ произошла ошибка!</span>
+                </div>
+                <br>
+                <div class="text-center">
+                  <a id="current_report_link" href="" target="_blank" class="btn profile-custom-btn" hidden="">Скачать отчет</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-12 col-12">
+            <div class="custom-block bg-white">
+                <h5 class="mb-2 ms-2">Список отчетов загрузки приборов учета</h5>
+                <div class="table-responsive p-2">
+                    <table class="account-table table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Название отчета загрузки приборов учета</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in list_reports %}
+                            <tr>
+                                <td scope="row">{{report}}</td>
+                                <td scope="row">
+                                    <a href="../media/upload_devices_reports/{{report}}" target="_blank" class="btn profile-custom-btn">Скачать отчет</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'pages/js/for-device-add.js' %}?20250710"></script>
+{% endblock %}

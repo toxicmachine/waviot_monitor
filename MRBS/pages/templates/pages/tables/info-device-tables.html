@@ -1,0 +1,50 @@
+{% load static %}
+    {% if received %}
+    <h5 class="mb-2 ms-2 text-center">Прибор учета № {{request_device.serial_number}}</h5>
+    <div class="table-responsive p-2">
+        <table class="account-table table">
+            <thead>
+                <tr>
+                    <th scope="col">Заводской номер ПУ</th>
+                    <th scope="col">Тип прибора учета</th>
+                    <th scope="col">Подразделение</th>
+                    <th scope="col">Адрес установки</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td scope="row">{{request_device.serial_number}}</td>
+                    <td scope="row">{{request_device.variety}}</td>
+                    <td scope="row">{{request_device.department.name}}</td>
+                    <td scope="row">{{request_device.address_1c}}</td>
+                </tr>
+                <tr><td></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="p-2" id="chart"></div>
+    <div class="table-responsive p-2">
+        <table id="device-info-table" class="account-table table">
+            <thead>
+                <tr>
+                    <th scope="col">Вид опроса сервера</th>
+                    <th scope="col">Дата опроса сервера</th>
+                    <th scope="col">Показания A + T1</th>
+                    <th scope="col">Время и дата записи данных с ПУ на сервер</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in device_stat %}
+                <tr>
+                    <td scope="row">{{stat.parse_history.parse_comment}}</td>
+                    <td scope="row">{{stat.parse_history.parse_end_time}}</td>
+                    <td scope="row">{{stat.meter_value}}</td>
+                    <td scope="row">{{stat.last_record_time}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <h6 class="mb-2 ms-2 text-center">Прибор учета не найден!</h6>
+    {% endif %}

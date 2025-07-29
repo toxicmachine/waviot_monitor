@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_content %}
+    <div class="row mb-4">
+        <div class="col-lg-12 col-12">
+            <div class="custom-block bg-white">
+                <h5 class="mb-2 ms-2">Список базовых станций</h5>
+                <div class="table-responsive p-2">
+                    <table class="account-table table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Подразделение</th>
+                                <th scope="col">Адрес установки</th>
+                                <th scope="col">Номер БС</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for station in all_stations %}
+                            <tr>
+                                <td scope="row">{{station.department}}</td>
+                                <td scope="row">{{station.name}}</td>
+                                <td scope="row">{{station.station_number}}</td>
+                                <td scope="row">
+                                    <a href="base-station/{{station.pk}}/" target="_blank" class="btn profile-custom-btn">Подробнее</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+{% endblock %}

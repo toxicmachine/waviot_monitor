@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_content %}
+    <div class="row mb-4">
+        <div class="col-lg-2 col-12">
+            <div class="custom-block bg-white">
+                <div class="custom-block custom-block-profile bg-white" style="padding: 0 5px 0 5px;">
+                    {% csrf_token %}
+                    <div class="text-center my-3">
+                        <button id="count_on_point_but" style="width: 200px;" class="btn profile-custom-btn">Количество ПУ по адресам</button>
+                    </div>
+                    <div class="text-center my-3">
+                        <button id="heatmap_but" style="width: 200px;" class="btn profile-custom-btn">Адреса по проценту опроса</button>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+        <br>
+        <div class="col-lg-10 col-12">
+            <div class="custom-block bg-white">
+                <div class="text-center">
+                      <div id="spinner-big" class="spinner-border text-tosk" role="status" hidden="">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                </div>
+                <div id="map-block" class="custom-block custom-block-profile bg-white">
+                    {% include 'pages/data-on-map-part.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'pages/js/for-data-map.js' %}?20250627"></script>
+{% endblock %}
