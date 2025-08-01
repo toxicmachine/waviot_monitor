@@ -1,1 +1,5 @@
 /MRBS/MRBS/.env
+/MRBS/media
+/MRBS/static
+/MRBS/pages/migrations
+/MRBS/users/migrations

@@ -154,6 +154,10 @@ API_PASS = config('API_PASS')
 
 # Настройки подключения к Waviot cloud
 
+API_SERVER_NAME_CLOUD = config('API_SERVER_NAME_CLOUD')
+API_LOGIN_CLOUD = config('API_LOGIN_CLOUD')
+API_PASS_CLOUD = config('API_PASS_CLOUD')
+
 API_WCK = config('API_WCK')
 
 # Настройка подключения к api Dadata (получение координат по коду фиас)

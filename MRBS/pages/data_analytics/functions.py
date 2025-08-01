@@ -435,6 +435,10 @@ def get_coordinates_from_dadata(fias):
         return {'success': False,}
 
 
+def is_strictly_numeric(s):
+    return bool(re.fullmatch(r'\d+', s))
+
+
 def file_upload_processing(file):
     unique_serial_numbers = set(Device.objects.values_list('serial_number', flat=True))
     unique_points = set(AddressPoint.objects.values_list('building_address', flat=True))
@@ -456,7 +460,9 @@ def file_upload_processing(file):
                 continue
             clear_line_count += 1
             row_serial_number = clear_line.partition(';')[0]
-            if row_serial_number in unique_serial_numbers:
+            if not is_strictly_numeric(row_serial_number):
+                result_file_rows.append(f'{clear_line};Некорректный номер ПУ')
+            elif row_serial_number in unique_serial_numbers:
                 count_old_devices += 1
                 result_file_rows.append(f'{clear_line};ПУ есть в системе')
             else:
@@ -486,7 +492,11 @@ def file_upload_processing(file):
                             elif 'Уваров' in split_clear_line[6]:
                                 depart_clear = DepartmentList.objects.get(name='Уварово')
                             elif 'Рассказов' in split_clear_line[6]:
-                                depart_clear = DepartmentList.objects.get(name='Рассказово')
+                                if not 'Рассказовский р-н' in split_clear_line[4]:
+                                    depart_clear = DepartmentList.objects.get(name='Рассказово')
+                                else:
+                                    result_file_rows.append(f'{row};ПУ находится в специфичном подразделении')
+                                    continue
                             elif 'Котовск' in split_clear_line[6]:
                                 depart_clear = DepartmentList.objects.get(name='Котовск')
                             device_address_point = AddressPoint.objects.create(department=depart_clear,

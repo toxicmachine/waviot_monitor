@@ -12,10 +12,22 @@ from django.conf import settings
 from ..models import *
 
 
-def get_token():
-    token_request = requests.post(url=settings.API_SERVER_NAME + 'auth',
-                                  params={"login": settings.API_LOGIN,
-                                          "password": settings.API_PASS})
+def get_token(**kwargs):
+    api_point= kwargs.pop('api_point', None)
+    if api_point == 'local':
+        token_request = requests.post(url=settings.API_SERVER_NAME + 'auth',
+                                      params={"login": settings.API_LOGIN,
+                                              "password": settings.API_PASS})
+    elif api_point == 'cloud':
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "MyCustomApp/1.0",  # любое произвольное значение
+            "X-Requested-With": "XMLHttpRequest"
+        }
+        token_request = requests.post(url=settings.API_SERVER_NAME_CLOUD + 'auth',
+                                      json={"login": settings.API_LOGIN_CLOUD,
+                                            "password": settings.API_PASS_CLOUD},
+                                      headers=headers)
     token = token_request.json()
     token_decoded_payload = jwt.decode(token['WAVIOT_JWT'], options={"verify_signature": False})
     token_expiration_time = token_decoded_payload['exp']
@@ -29,14 +41,14 @@ def get_bs_info(comment_field):
     all_stations = BaseStation.objects.all()
     new_parse = ParseHistory(parse_type=ParseTemp.objects.get(name='Опрос БС'))
     new_parse.save()
-    token = get_token()
+    token = get_token(api_point='local')
     for station in all_stations:
         request_check = False
         while not request_check:
             try:
                 current_time = int(datetime.datetime.now(datetime.UTC).timestamp())
                 if token['expiration_time'] - 20 < current_time:
-                    token = get_token()
+                    token = get_token(api_point='local')
                 request_for_bs = requests.get(settings.API_SERVER_NAME + 'telecom/api/stinfo',
                                               auth=BearerToken(token['token']['WAVIOT_JWT']),
                                               params={'bs_ids': station.station_number,
@@ -76,7 +88,7 @@ def get_pu_info_extended(comment_field, **kwargs):
     last_parse_object = ParseHistory.objects.filter(parse_type__name='Опрос ПУ').last()
     new_parse = ParseHistory(parse_type=ParseTemp.objects.get(name='Опрос ПУ'))
     new_parse.save()
-    token = get_token()
+    token = get_token(api_point='local')
     # правильная идея
     # опрашиваю суточные
     for i, devices_chunk in enumerate(chunked_queryset(all_devices, chunk_size=300)):
@@ -86,7 +98,7 @@ def get_pu_info_extended(comment_field, **kwargs):
             try:
                 current_time = int(datetime.datetime.now(datetime.UTC).timestamp())
                 if token['expiration_time'] - 20 < current_time:
-                    token = get_token()
+                    token = get_token(api_point='local')
                 request_for_pu = requests.get(settings.API_SERVER_NAME + 'driver_electro5/api/report/history',
                                               auth=BearerToken(token['token']['WAVIOT_JWT']),
                                               params={'modem': serial_numbers_str,
@@ -125,7 +137,7 @@ def get_pu_info_extended(comment_field, **kwargs):
             try:
                 current_time = int(datetime.datetime.now(datetime.UTC).timestamp())
                 if token['expiration_time'] - 20 < current_time:
-                    token = get_token()
+                    token = get_token(api_point='local')
                 request_for_pu = requests.get(settings.API_SERVER_NAME + 'driver_electro5/api/report/history',
                                               auth=BearerToken(token['token']['WAVIOT_JWT']),
                                               params={'modem': serial_numbers_str,
@@ -155,47 +167,117 @@ def get_pu_info_extended(comment_field, **kwargs):
             except Exception as e:
                 continue
     # получаю те ПУ, по которым нет показаний на локальном waviot
-    devices_without_history = Device.objects.exclude(devicetemphistory__isnull=False)
     # запросу к облаку waviot
-    for device in devices_without_history:
+    from_time = int(time.time()) - int(last_parse_object.parse_end_time.timestamp())
+    if from_time < 864000:
+        from_time = int(time.time()) - 864000
+    devices_serial_numbers_left = list(
+        Device.objects.exclude(devicetemphistory__isnull=False).values_list('serial_number', flat=True)
+    )
+    token = get_token(api_point='cloud')
+    error_device_list = []
+    while len(devices_serial_numbers_left) > 0:
+        batch = devices_serial_numbers_left[:50]
+        batch_string = ",".join(batch)
         request_check = False
         while not request_check:
             try:
-                request_for_device = requests.get("https://lk.waviot.ru/api.data/get_modem_channel_values/",
-                                                  params={'modem_id': hex(int(device.serial_number))[2:],
-                                                          'channel': 'electro_ac_p_lsum_t1',
-                                                          'key': settings.API_WCK,
-                                                          'from': str(int(last_parse_object.parse_end_time.timestamp())),
-                                                          'to': str(int(time.time())),
-                                                          },
-                                                  timeout=3
-                                                  ).json()
+                current_time = int(datetime.datetime.now(datetime.UTC).timestamp())
+                if token['expiration_time'] - 20 < current_time:
+                    token = get_token(api_point='cloud')
+                request_for_pu = requests.get(settings.API_SERVER_NAME_CLOUD + 'driver_electro5/api/report/history',
+                                              auth=BearerToken(token['token']['WAVIOT_JWT']),
+                                              params={'modem': batch_string,
+                                                      'profile': '1.0.98.2.0.255',
+                                                      'from': str(from_time),
+                                                      'to': str(int(time.time())),
+                                                      },
+                                              timeout=3
+                                              )
                 request_check = True
-                if not request_for_device['status'] == 'ok':
-                    continue
+                if isinstance(request_for_pu.json(), dict):
+                    message_error_value = request_for_pu.json().get('What', None)
+                    error_device = message_error_value.partition('Modem ID ')[2]
+                    error_device_list.append(error_device)
+                    index_error_device = devices_serial_numbers_left.index(error_device)
+                    del devices_serial_numbers_left[index_error_device]
                 else:
-                    if request_for_device['values'] is None:
-                        continue
-                    else:
-                        values_dict = request_for_device['values']
-                        keys_list = list(values_dict.keys())  # получаем список ключей
-                        first_key = keys_list[0]  # извлекаем первый ключ
-                        value_for_first_key = values_dict[first_key]
-                        last_parse_record = DeviceHistory.objects.filter(device=Device.objects.get(serial_number=device.serial_number)).order_by('-last_record_time').last()
-                        new_last_record_time = datetime.datetime.fromtimestamp(int(first_key), tz=pytz.timezone(settings.TIME_ZONE))
-                        if last_parse_record is not None:
-                            if not last_parse_record.last_record_time < new_last_record_time:
-                                continue
+                    for element in request_for_pu.json():
+                        last_parse_record = DeviceHistory.objects.filter(
+                            device=Device.objects.get(serial_number=element['modem'])).order_by('-last_record_time').last()
+                        if element['meterings']:
+                            # проверка, что последняя запись на waviot не совпадает с имеющейся
+                            new_last_record_time = datetime.datetime.fromtimestamp(element['meterings'][0]['ts_get'],
+                                                                                   tz=pytz.timezone(settings.TIME_ZONE))
+                            if last_parse_record is not None:
+                                if not last_parse_record.last_record_time < new_last_record_time:
+                                    continue
+                                else:
+                                    DeviceTempHistory(device=Device.objects.get(serial_number=element['modem']),
+                                                      last_record_time=new_last_record_time,
+                                                      meter_value=round_if_float(element['meterings'][0]['1.8.0']) / 1000,
+                                                      parse_history=new_parse).save()
                             else:
-                                DeviceTempHistory(device=Device.objects.get(serial_number=device.serial_number),
+                                DeviceTempHistory(device=Device.objects.get(serial_number=element['modem']),
                                                   last_record_time=new_last_record_time,
-                                                  meter_value=round_if_float(float(value_for_first_key)) / 1000,
+                                                  meter_value=round_if_float(element['meterings'][0]['1.8.0']) / 1000,
                                                   parse_history=new_parse).save()
-                        else:
-                            DeviceTempHistory(device=Device.objects.get(serial_number=device.serial_number),
-                                              last_record_time=new_last_record_time,
-                                              meter_value=round_if_float(float(value_for_first_key)) / 1000,
-                                              parse_history=new_parse).save()
+                    del devices_serial_numbers_left[:len(batch)]
+            except Exception as e:
+                continue
+    devices_serial_numbers_left = list(
+        Device.objects.exclude(devicetemphistory__isnull=False).values_list('serial_number', flat=True)
+    )
+    last_left_devices = set(devices_serial_numbers_left) - set(error_device_list)
+    last_left_devices_list = list(last_left_devices)
+    error_device_list = []
+    while len(last_left_devices_list) > 0:
+        batch = last_left_devices_list[:10]
+        batch_string = ",".join(batch)
+        request_check = False
+        while not request_check:
+            try:
+                current_time = int(datetime.datetime.now(datetime.UTC).timestamp())
+                if token['expiration_time'] - 20 < current_time:
+                    token = get_token(api_point='cloud')
+                request_for_pu = requests.get(settings.API_SERVER_NAME_CLOUD + 'driver_electro5/api/report/history',
+                                              auth=BearerToken(token['token']['WAVIOT_JWT']),
+                                              params={'modem': batch_string,
+                                                      'profile': '1.0.99.1.0.255',
+                                                      'from': str(from_time),
+                                                      'to': str(int(time.time())),
+                                                      },
+                                              timeout=8
+                                              )
+                request_check = True
+                if isinstance(request_for_pu.json(), dict):
+                    message_error_value = request_for_pu.json().get('What', None)
+                    error_device = message_error_value.partition('Modem ID ')[2]
+                    error_device_list.append(error_device)
+                    index_error_device = last_left_devices_list.index(error_device)
+                    del last_left_devices_list[index_error_device]
+                else:
+                    for element in request_for_pu.json():
+                        last_parse_record = DeviceHistory.objects.filter(
+                            device=Device.objects.get(serial_number=element['modem'])).order_by('-last_record_time').last()
+                        if element['meterings']:
+                            # проверка, что последняя запись на waviot не совпадает с имеющейся
+                            new_last_record_time = datetime.datetime.fromtimestamp(element['meterings'][0]['ts_get'],
+                                                                                   tz=pytz.timezone(settings.TIME_ZONE))
+                            if last_parse_record is not None:
+                                if not last_parse_record.last_record_time < new_last_record_time:
+                                    continue
+                                else:
+                                    DeviceTempHistory(device=Device.objects.get(serial_number=element['modem']),
+                                                      last_record_time=new_last_record_time,
+                                                      meter_value=round_if_float(element['meterings'][0]['1.8.0']) / 1000,
+                                                      parse_history=new_parse).save()
+                            else:
+                                DeviceTempHistory(device=Device.objects.get(serial_number=element['modem']),
+                                                  last_record_time=new_last_record_time,
+                                                  meter_value=round_if_float(element['meterings'][0]['1.8.0']) / 1000,
+                                                  parse_history=new_parse).save()
+                    del last_left_devices_list[:len(batch)]
             except Exception as e:
                 continue
     for record in DeviceTempHistory.objects.all():

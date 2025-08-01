@@ -11,6 +11,8 @@ from .forms import LoginUserForm, UserPasswordChangeForm
 class LoginUser(LoginView):
     form_class = LoginUserForm
     template_name = 'users/login.html'
+    redirect_authenticated_user = True
+    success_url = '/data-overview'
     extra_context = {
         'title': 'Мониторинг работы УСПД',
         'header': 'Мониторинг работы УСПД',
