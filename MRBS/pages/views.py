@@ -459,71 +459,13 @@ class MRBSDownloadXLSXReport(View):
         return response
 
 
-# ниже находятся служебные FBV
-def device_input(request):
-    if request.method == 'POST':
-        with open('C:\\Users\\kuramshin_ra\\Documents\\python_projects\\WaviotMonitor\\MRBS\\all_dev_info.csv', 'r',
-                  encoding='utf-8') as device_file:
-            for line in device_file:
-                device_parts = line.strip().split(';')
-                building_address = AddressPoint.objects.get(building_address=device_parts[3])
-                new_device = Device(department=device_parts[0],
-                                    serial_number=device_parts[1],
-                                    variety=device_parts[2],
-                                    fias=AddressPoint.objects.get(pk=building_address.pk),
-                                    address_1c=device_parts[5],
-                                    )
-                new_device.save()
-
-    return render(request, 'pages/create.html')
-
-
-def department_normalize(request):
-    if request.method == 'POST':
-        # ДЛЯ ТАБЛИЦЫ AddressPoint
-        # with open('C:\\Users\\kuramshin_ra\\Documents\\python_projects\\WaviotMonitor\\MRBS\\new_address_point.csv', 'r', encoding='utf-8') as point_list:
-        #     for line in point_list:
-        #         address_parts = line.strip().split(';')
-        #         if 'Моршанск' in address_parts[0]:
-        #             depart_clear = DepartmentList.objects.get(name='Моршанск')
-        #         elif 'Тамбов' in address_parts[0]:
-        #             depart_clear = DepartmentList.objects.get(name='Тамбов')
-        #         elif 'Мичуринск' in address_parts[0]:
-        #             depart_clear = DepartmentList.objects.get(name='Мичуринск')
-        #         elif 'Кирсанов' in address_parts[0]:
-        #             depart_clear = DepartmentList.objects.get(name='Кирсанов')
-        #         elif 'Жердевк' in address_parts[0]:
-        #             depart_clear = DepartmentList.objects.get(name='Жердевк')
-        #         elif 'Уваров' in address_parts[0]:
-        #             depart_clear = DepartmentList.objects.get(name='Уваров')
-        #         elif 'Рассказов' in address_parts[0]:
-        #             depart_clear = DepartmentList.objects.get(name='Рассказов')
-        #         elif 'Котовск' in address_parts[0]:
-        #             depart_clear = DepartmentList.objects.get(name='Котовск')
-        #         updated_point = AddressPoint.objects.get(building_address=address_parts[2])
-        #         updated_point.department = depart_clear
-        #         updated_point.save()
-        # ДЛЯ ТАБЛИЦЫ Device
-        # all_devices = Device.objects.all()
-        # for device in all_devices:
-        #     if 'Моршанск' in device.department:
-        #         depart_clear = DepartmentList.objects.get(name='Моршанск')
-        #     elif 'Тамбов' in device.department:
-        #         depart_clear = DepartmentList.objects.get(name='Тамбов')
-        #     elif 'Мичуринск' in device.department:
-        #         depart_clear = DepartmentList.objects.get(name='Мичуринск')
-        #     elif 'Кирсанов' in device.department:
-        #         depart_clear = DepartmentList.objects.get(name='Кирсанов')
-        #     elif 'Жердевк' in device.department:
-        #         depart_clear = DepartmentList.objects.get(name='Жердевк')
-        #     elif 'Уваров' in device.department:
-        #         depart_clear = DepartmentList.objects.get(name='Уваров')
-        #     elif 'Рассказов' in device.department:
-        #         depart_clear = DepartmentList.objects.get(name='Рассказов')
-        #     elif 'Котовск' in device.department:
-        #         depart_clear = DepartmentList.objects.get(name='Котовск')
-        #     device.dep_clear = depart_clear
-        #     device.save()
-        print()
-
-    return render(request, 'pages/create.html')
+def handler404(request, exception):
+    if not request.user.is_authenticated:
+        return redirect('users:login')
+    else:
+        return render(request, 'pages/404page.html',
+                      status=404,
+                      context={
+                          'title': 'Мониторинг работы УСПД',
+                          'header': 'Мониторинг работы УСПД',
+                      })

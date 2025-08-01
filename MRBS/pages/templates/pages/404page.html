@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_content %}
+    <div class="row mb-4">
+        <div class="col-lg-12 col-12">
+            <div class="custom-block bg-white">
+                <div class="tab-pane" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                    <div class="text-center p-2">
+                        <img style="max-width: 10%; height: auto;" src="{% static 'images/attention.png' %}" alt="1">
+                        <h3>Страница не найдена!</h3>
+                        <h6>Ошибка 404</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'pages/js/for-info-device.js' %}?20250619"></script>
+{% endblock %}
