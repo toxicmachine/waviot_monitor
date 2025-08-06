@@ -994,6 +994,7 @@ strong {
     color: red;
     list-style-type: none;
     font-size: var(--bs-body-font-size);
+    text-align: center;
 }
 
 /*---------------------------------------

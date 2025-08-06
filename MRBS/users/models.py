@@ -8,3 +8,7 @@ class User(AbstractUser):
     department = models.CharField(blank=True, null=True, max_length=100)
     email_notify = models.BooleanField(default=False, verbose_name='Уведомления на почту')
 
+    def save(self, *args, **kwargs):
+        if self.password and not self.pk:  # проверяем наличие первичного ключа (PK)
+            self.set_password(self.password)  # применяем хеширование
+        super().save(*args, **kwargs)
