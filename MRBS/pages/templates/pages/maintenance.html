@@ -46,6 +46,7 @@
                             <tr>
                                 <th scope="col"></th>
                                 <th scope="col"></th>
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -53,12 +54,16 @@
                             <tr>
                                 <td class="fs-6" scope="row"><b>ПЕРЕЗАПУСК СЕРВИСА</b></td>
                                 <td scope="row">
-                                    <button id="restart_but" style="width: 250px;" class="btn red-custom-btn"><i class="bi bi-arrow-clockwise"></i> ПЕРЕЗАПУСК</button>
+                                    <button id="reload_page" style="width: 300px; visibility: hidden;" class="btn profile-custom-btn"><i class="bi bi-arrow-clockwise me-2"></i> Обновить страницу</button>
+                                </td>
+                                <td scope="row">
+                                    <button id="restart_but" style="width: 300px;" class="btn red-custom-btn"><i class="bi bi-arrow-clockwise me-2"></i> ПЕРЕЗАПУСК</button>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="fs-6" scope="row"><b>Состояние опроса по ПУ</b></td>
-                                <td scope="row"><button id="" style="width: 250px;" class="btn red-custom-btn"><i class="bi bi-wrench"></i> Исправить состояние</button></td>
+                                <td scope="row"></td>
+                                <td scope="row"><button id="" style="width: 300px;" class="btn red-custom-btn"><i class="bi bi-wrench me-2"></i> Исправить состояние</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -71,6 +76,6 @@
     </div>
 {% endblock %}
 {% block extra_scripts %}
-<script src="{% static 'pages/js/for-maintenance.js' %}?20250808"></script>
+<script src="{% static 'pages/js/for-maintenance.js' %}?20250808-1"></script>
 {% endblock %}
 
