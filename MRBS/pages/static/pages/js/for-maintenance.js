@@ -19,4 +19,3 @@ restart_but.addEventListener("click", function(event) {
         }
     });
 });
-});
