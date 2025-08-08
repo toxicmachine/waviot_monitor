@@ -400,13 +400,29 @@ strong {
   border-color: transparent;
   color: var(--white-color);
 }
-/*
-.profile-custom-btn[disabled]:hover {
+
+.red-custom-btn {
+  background: var(--primary-color);
+  border: none;
+  color: var(--white-color);
+  font-size: var(--menu-font-size);
+  transition: all 0.3s;
+  padding: 10px 20px;
+}
+
+.red-custom-btn:hover {
+  background: var(--custom-btn-bg-color);
+  border-color: transparent;
+  color: var(--white-color);
+}
+
+.red-custom-btn:disabled {
   background: var(--bs-gray-400);
   border-color: transparent;
   color: var(--white-color);
 }
-*/
+
+
 /*---------------------------------------
   NAVIGATION              
 -----------------------------------------*/

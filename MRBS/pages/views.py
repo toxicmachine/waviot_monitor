@@ -4,6 +4,7 @@ import folium
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.management import call_command
 from django.db.models import Count, Q, Prefetch
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_list_or_404, redirect
@@ -39,6 +40,7 @@ class MRBSBasic(LoginRequiredMixin, TemplateView):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
 
         return context
 
@@ -66,6 +68,7 @@ class MRBSDataOverview(MRBSBasic):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
 
         last_bs_parses = ParseHistory.objects.filter(parse_type__name='Опрос БС').order_by('-parse_end_time')[:10]
         last_bs_parses = list(reversed(last_bs_parses))
@@ -102,6 +105,7 @@ class MRBSDataOverviewOne(MRBSBasic):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
 
         last_bs_parses = ParseHistory.objects.filter(parse_type__name='Опрос БС').order_by('-parse_end_time')[:10]
         last_bs_parses = list(reversed(last_bs_parses))
@@ -138,6 +142,7 @@ class MRBSBaseStations(MRBSBasic):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
 
         if self.request.user.department == 'Аппарат Управления':
             context['all_stations'] = BaseStation.objects.all().order_by('department__name', 'station_number')
@@ -156,6 +161,7 @@ class MRBSBaseStationInfo(MRBSBasic):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
 
         context['base_station_info'] = BaseStation.objects.get(pk=self.kwargs['pk'])
         context['base_station_history'] = BaseStationHistory.objects.filter(basestation=BaseStation.objects.get(pk=self.kwargs['pk'])).order_by('-parse_history__parse_end_time')[:10]
@@ -177,6 +183,7 @@ class MRBSChangeHistory(MRBSBasic):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
 
         context['changes_history'] = ChangeHistory.objects.all()
 
@@ -197,6 +204,7 @@ class MRBSDataOnMap(MRBSBasic):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
 
         map_object = map_generator(None, self.request.user.department)
         context['map'] = map_object['map']
@@ -225,6 +233,22 @@ class MRBSDeviceAdd(MRBSBasic, FormView):
     form_class = FileUploadForm
     template_name = 'pages/device-add.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('users:login')
+        user_dep = self.request.user.department
+        if not self.is_in_group('AddDeviceAccess'):
+            if not user_dep == 'Аппарат Управления':
+                if DepartmentList.objects.filter(name=user_dep).exists():
+                    url = reverse('data-overview-one', kwargs={'pk': DepartmentList.objects.get(name=user_dep).pk})
+                    return HttpResponseRedirect(url)
+                else:
+                    return super().dispatch(request, *args, **kwargs)
+            else:
+                return HttpResponseRedirect(reverse('data-overview'))
+        else:
+            return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -232,6 +256,7 @@ class MRBSDeviceAdd(MRBSBasic, FormView):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
 
         context['list_reports'] = list_upload_devices_reports()
 
@@ -250,6 +275,52 @@ def add_device(request):
             return JsonResponse({'status': False}, status=200)
     else:
         return JsonResponse({'error': 'Нет файла'}, status=400)
+
+
+class MRBSMaintenancePage(MRBSBasic):
+    template_name = 'pages/maintenance.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('users:login')
+        user_dep = self.request.user.department
+        if not self.is_in_group('MaintenanceAccess'):
+            if not user_dep == 'Аппарат Управления':
+                if DepartmentList.objects.filter(name=user_dep).exists():
+                    url = reverse('data-overview-one', kwargs={'pk': DepartmentList.objects.get(name=user_dep).pk})
+                    return HttpResponseRedirect(url)
+                else:
+                    return super().dispatch(request, *args, **kwargs)
+            else:
+                return HttpResponseRedirect(reverse('data-overview'))
+        else:
+            return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Получаем имя текущего маршрута
+        resolved_url = resolve(self.request.path)
+        context['current_urlname'] = resolved_url.url_name
+        context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
+
+        context['parse_temp_state'] = ParseTemp.objects.get(name='Опрос ПУ').status
+        context['parse_temp_count'] = DeviceTempHistory.objects.count()
+
+        return context
+
+
+@login_required
+def reload_waviot_monitor(request):
+    if request.method == 'POST':
+        try:
+            call_command('reload_WaviotMonitor')  # Вызываем нашу команду
+            return HttpResponseRedirect(reverse('maintenance'))
+        except Exception as e:
+            print(e)
+
+    return HttpResponseRedirect(reverse('maintenance'))
 
 
 class MRBSInfoDevicePage(MRBSBasic, FormView):
@@ -315,6 +386,7 @@ class MRBSServerParse(MRBSBasic):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
         context['parse_access'] = self.is_in_group('ParseAccess')
 
         context['request_bs_history'] = ParseHistory.objects.filter(parse_type__name='Опрос БС').order_by('-parse_end_time')[:5]
@@ -367,6 +439,7 @@ class MRBSParsePuHistoryAllDep(MRBSBasic):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
 
         request_parse = ParseHistory.objects.filter(pk=self.kwargs['pk'])
 
@@ -411,6 +484,7 @@ class MRBSAddressPointInfo(MRBSBasic):
         resolved_url = resolve(self.request.path)
         context['current_urlname'] = resolved_url.url_name
         context['add_device_access'] = self.is_in_group('AddDeviceAccess')
+        context['maintenance_access'] = self.is_in_group('MaintenanceAccess')
 
         context['fias_info'] = AddressPoint.objects.annotate(device_count=Count('device')).get(pk=self.kwargs['pk'])
         devices = list(Device.objects.filter(fias=self.kwargs['pk']))

@@ -17,7 +17,7 @@
         <link type="text/css" href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
         <link type="text/css" href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet" />
         <link type="text/css" href="{% static 'css/apexcharts.css' %}" rel="stylesheet" />
-        <link type="text/css" href="{% static 'css/tooplate-mini-finance.css' %}" rel="stylesheet" />
+        <link type="text/css" href="{% static 'css/tooplate-mini-finance.css' %}?20250808" rel="stylesheet" />
     </head>
     <body>
         <header class="navbar sticky-top flex-md-nowrap">
@@ -84,6 +84,14 @@
                                 <a {% if current_urlname == "device-add" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'device-add' %}">
                                     <i class="bi-plus-circle me-2"></i>
                                     Добавление ПУ
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% if maintenance_access %}
+                            <li class="nav-item">
+                                <a {% if current_urlname == "maintenance" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'maintenance' %}">
+                                    <i class="bi bi-tools"></i>
+                                    Обслуживание сервиса
                                 </a>
                             </li>
                             {% endif %}
