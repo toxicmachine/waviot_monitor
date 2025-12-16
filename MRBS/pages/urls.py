@@ -1,9 +1,11 @@
 from django.conf import settings
 from django.urls import path
+from django.shortcuts import redirect
 from . import views
 
 
 urlpatterns = [
+    path('', lambda request: redirect('data-overview', permanent=True)),
     path('data-overview/', views.MRBSDataOverview.as_view(), name='data-overview'),
     path('data-overview/<int:pk>/', views.MRBSDataOverviewOne.as_view(), name='data-overview-one'),
     path('base-stations/', views.MRBSBaseStations.as_view(), name='base-stations'),
